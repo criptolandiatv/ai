@@ -1,27 +1,17 @@
-/**
- * Reproduction for issue #5414: Observation mismatch when running parallel LLM calls
- *
- * Issue: When running multiple LLMs in parallel, the observation traces are
- * incorrectly mapped. All traces preserve the name and timing from the first
- * call instead of matching each call's unique context.
- *
- * Expected: Each parallel LLM call should have its own separate trace with
- * distinct names and timings.
- *
- * Actual: All observation traces get overwritten with the first trace's
- * metadata (name and timing), resulting in mismatched logs.
- */
-
 import { openai } from '@ai-sdk/openai';
 import { generateText } from 'ai';
 import 'dotenv/config';
 
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { LangfuseExporter } from 'langfuse-vercel';
 
 const sdk = new NodeSDK({
-  traceExporter: new ConsoleSpanExporter(),
+  traceExporter: new LangfuseExporter({
+    secretKey: 'sk-lf-ba21144e-1dc9-460c-bd44-6aae9b73c2f7',
+    publicKey: 'pk-lf-1fae110e-5b2f-4855-a931-b2c0246cf5a6',
+    baseUrl: 'https://us.cloud.langfuse.com', 
+    }),
   instrumentations: [getNodeAutoInstrumentations()],
 });
 
