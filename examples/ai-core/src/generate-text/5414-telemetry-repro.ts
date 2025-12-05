@@ -8,16 +8,15 @@ import { LangfuseExporter } from 'langfuse-vercel';
 
 const sdk = new NodeSDK({
   traceExporter: new LangfuseExporter({
-    secretKey: 'sk-lf-ba21144e-1dc9-460c-bd44-6aae9b73c2f7',
-    publicKey: 'pk-lf-1fae110e-5b2f-4855-a931-b2c0246cf5a6',
-    baseUrl: 'https://us.cloud.langfuse.com', 
-    }),
+    secretKey: process.env.LANGFUSE_SECRET_KEY!,
+    publicKey: process.env.LANGFUSE_PUBLIC_KEY!,
+    baseUrl: process.env.LANGFUSE_BASE_URL || 'https://us.cloud.langfuse.com',
+  }),
   instrumentations: [getNodeAutoInstrumentations()],
 });
 
 sdk.start();
 
-// Simulated trace ID (would come from langfuse or similar in real usage)
 const langfuseTraceId = 'trace-123';
 
 async function main() {
@@ -25,7 +24,6 @@ async function main() {
 
   const model = openai('gpt-4o-mini');
 
-  // Run three parallel calls with DIFFERENT names in telemetry
   const results = await Promise.all([
     generateText({
       model,
