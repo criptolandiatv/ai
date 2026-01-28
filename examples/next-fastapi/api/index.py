@@ -31,7 +31,7 @@ available_tools = {
 def stream_text(messages: List[ClientMessage], protocol: str = 'data'):
     stream = client.chat.completions.create(
         messages=messages,
-        model="gpt-4o",
+        model="gpt-4o-mini",  # Optimized: 97% cheaper than gpt-4o
         stream=True,
         tools=[{
             "type": "function",
